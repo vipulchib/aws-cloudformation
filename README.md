@@ -1,2 +1,1 @@
-# aws-cloudformation
-AWS YAML CloudFormation Script to launch VPC and its components
+Purpose of this post is to outline the basics of creating AWS resources using Cloud Formation as a service.
