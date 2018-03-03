@@ -14,8 +14,9 @@ I often have the need to spin up Arista vEOS Router instances in AWS to demonstr
 # Cloudformation Template creation in YAML
 AWS has done a tremendous job in listing out all the fine details and the documentation is pretty thorough. I will reference a lot of points from this URL - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-guide.html. Templates include several major sections. The Resources section is the only required section. Some sections in a template can be in any order. 
 
-In our template we will specify a [AWSTemplateFormatVersion: "version date"] - the latest template format version is 2010-09-09 and is currently the only valid value.
-'AWSTemplateFormatVersion: '2010-09-09''
+In our template we will specify a [AWSTemplateFormatVersion: "version date"] -
+    AWSTemplateFormatVersion: '2010-09-09'
+
 
 Lets walk through and create the template from scratch:
 
