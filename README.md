@@ -21,12 +21,14 @@ AWS has done a tremendous job in listing out all the fine details and the docume
 2. **Description** - A text string that describes the template.
 ```Description: VPC with Arista vEOS Router, subnets, route tables, igw, sg, Linux VMs```
 
-3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  We will provide a 'Description and then specify the 'Type' of Parameter with a 'Value (default' as Arista
-```Parameters: 
+3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  We will provide a 'Description and then specify the 'Type' of Parameter with a 'Value (default) as Arista:
+```
+Parameters: 
   ID:
     Description: VPC ID
     Type: String
-    Default: Arista```
+    Default: Arista
+ ```
 
 Lets walk through and create the template from scratch:
 
