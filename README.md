@@ -61,14 +61,15 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as an Amazon EC2 instance.  
-```
-Resources:
-```
+     ```
+     Resources: 
+     ```
 Here is a list of resources we will create:
 
    A. We will create a Resource for the VPC Creation:
-     ```     
-       TransitVPC:
+     
+     ``````
+         TransitVPC:
          Type: AWS::EC2::VPC
          Properties:
            CidrBlock: !Ref VPCCidr
@@ -77,8 +78,9 @@ Here is a list of resources we will create:
                Value: !Sub
                - VPC-${ID}
                - {ID: !Ref ID}
-     ```      
-    B. We
+     ``````  
+     
+   B. We
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
