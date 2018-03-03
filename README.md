@@ -16,8 +16,10 @@ AWS has done a tremendous job in listing out all the fine details and the docume
 
 ## Template Sections
 
-### AWSTemplateFormatVersion: "version date" - ```AWSTemplateFormatVersion: '2010-09-09'```
+1. **AWSTemplateFormatVersion: "version date"** - The AWS CloudFormation template version that the template conforms to. ```AWSTemplateFormatVersion: '2010-09-09'```
 
+2. **Description** - A text string that describes the template.
+```Description: VPC with Arista vEOS Router, subnets, route tables, igw, sg, Linux VMs```
 
 Lets walk through and create the template from scratch:
 
