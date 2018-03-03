@@ -66,7 +66,7 @@ Resources:
 ```
 Here is a list of resources we will create:
 
-     A. We will create a Resource for the VPC Creation:
+   A. We will create a Resource for the VPC Creation:
      ```     
        TransitVPC:
          Type: AWS::EC2::VPC
@@ -78,7 +78,7 @@ Here is a list of resources we will create:
                - VPC-${ID}
                - {ID: !Ref ID}
      ```      
-     B. We
+    B. We
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
