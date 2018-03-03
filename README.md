@@ -26,7 +26,10 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      Description: VPC with Arista vEOS Router, subnets, route tables, igw, sg, Linux VMs
      ```
 
-3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  We will provide a 'Description and then specify the 'Type' of Parameter with a 'Value (default)' as **Arista**:
+3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  
+
+     A. We will create a Parameter for the VPC ID, provide a 'Description and then specify the 'Type' of Parameter with a 
+     'Value (default)' as **Arista**:
      ```
      Parameters: 
        ID:
@@ -35,7 +38,6 @@ AWS has done a tremendous job in listing out all the fine details and the docume
          Default: Transit
      ```
 
-Lets walk through and create the template from scratch:
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
