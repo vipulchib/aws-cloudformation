@@ -229,7 +229,7 @@ I have broken down every section of the template and provided my thought process
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
 ```
-aws cloudformation create-stack --stack-name AristaVPCStack --template-body file://Arista-VPC-Cloudformation.yaml
+aws cloudformation create-stack --stack-name AristaVPCStack --template-body file://Github-AristaVPC.yaml
 ```
 
 
