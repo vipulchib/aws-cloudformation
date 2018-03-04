@@ -1,0 +1,218 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC with Arista vEOS Router, subnets, route tables, igw, sg, Linux VMs
+Parameters: 
+  ID:
+    Description: Arista VPC ID
+    Type: String
+    Default: Arista
+  VPCCidr: 
+    Description: VPC Supernet
+    Type: String
+    Default: 10.1.0.0/16
+  SubnetA1Cidr: 
+    Description: VPC Subnet A-1
+    Type: String
+    Default: 10.1.1.0/24
+  SubnetA2Cidr: 
+    Description: VPC Subnet A-2
+    Type: String
+    Default: 10.1.11.0/24
+Resources:
+  AristaVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCidr
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - VPC-${ID}
+          - {ID: !Ref ID}
+  AristaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: Arista VPC Security Group
+      GroupDescription: Allow SSH and ICMP from Everywhere
+      VpcId: !Ref 'AristaVPC'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: icmp
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - VPC-${ID}-SecurityGroup
+          - {ID: !Ref ID}
+  AristaVPCIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - VPC-${ID}-IGW
+          - {ID: !Ref ID}
+  AttachIGW:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref 'AristaVPC'
+      InternetGatewayId: !Ref 'AristaVPCIGW'
+  subnetA1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'AristaVPC'
+      CidrBlock: !Ref SubnetA1Cidr
+      AvailabilityZone: ca-central-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Ref SubnetA1Cidr
+  subnetA1RT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'AristaVPC'
+      Tags:
+        - Key: Name
+          Value: !Ref SubnetA1Cidr
+  subnetA1RTAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref subnetA1
+      RouteTableId: !Ref subnetA1RT  
+  subnetA2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref 'AristaVPC'
+      CidrBlock: !Ref SubnetA2Cidr
+      AvailabilityZone: ca-central-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Ref SubnetA2Cidr
+  subnetA2RT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'AristaVPC'
+      Tags:
+        - Key: Name
+          Value: !Ref SubnetA2Cidr
+  subnetA2RTAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref subnetA2
+      RouteTableId: !Ref subnetA2RT     
+  privateRouteA2:
+    Type: AWS::EC2::Route
+    DependsOn: vEOSIntfSubnetA2
+    Properties:
+      RouteTableId: !Ref 'subnetA2RT'
+      DestinationCidrBlock: 10.0.0.0/8
+      NetworkInterfaceId: !Ref 'vEOSIntfSubnetA2'
+  publicRouteA2:
+    Type: AWS::EC2::Route
+    DependsOn: AttachIGW
+    Properties:
+      RouteTableId: !Ref 'subnetA2RT'
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref 'AristaVPCIGW'
+  VMIntf1a:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SourceDestCheck: false
+      SubnetId: !Ref 'subnetA2'
+      GroupSet:
+      - !Ref AristaSecurityGroup
+      PrivateIpAddress: 10.1.11.10
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - Host-${ID}-ETH0
+          - {ID: !Ref ID}
+  VMIntf1aEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  AssociateVMIntf1aEIP:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt VMIntf1aEIP.AllocationId
+      NetworkInterfaceId: !Ref VMIntf1a
+  Ec2Instance1a:
+    Type: AWS::EC2::Instance
+    DependsOn: AristaVPCIGW
+    Properties:
+      AvailabilityZone: ca-central-1a
+      ImageId: ami-a954d1cd
+      InstanceType: t2.micro
+      KeyName: Arista-vEOS-Router
+      UserData: 
+        Fn::Base64: !Sub | 
+          #!/bin/bash -xe 
+          yum update -y 
+          yum --enablerepo=epel install -y iperf iperf3
+      NetworkInterfaces:
+       - NetworkInterfaceId: !Ref VMIntf1a
+         DeviceIndex: 0
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - ${ID}-Host
+          - {ID: !Ref ID}
+  vEOSIntfSubnetA1:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SourceDestCheck: false
+      SubnetId: !Ref 'subnetA1'
+      GroupSet:
+      - !Ref AristaSecurityGroup
+      PrivateIpAddress: 10.1.1.6
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - vRouter-${ID}-ETH1
+          - {ID: !Ref ID}
+  vEOSIntfSubnetA2:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SourceDestCheck: false
+      SubnetId: !Ref 'subnetA2'
+      GroupSet:
+      - !Ref AristaSecurityGroup
+      PrivateIpAddress: 10.1.11.6
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - vRouter-${ID}-ETH2
+          - {ID: !Ref ID}
+  vEOSIntfSubnetA1EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  AssociatevEOSIntfSubnetA1EIP:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt vEOSIntfSubnetA1EIP.AllocationId
+      NetworkInterfaceId: !Ref vEOSIntfSubnetA2
+  AristavEOSRouter:
+    Type: AWS::EC2::Instance
+    DependsOn: AristaVPCIGW
+    Properties:
+      AvailabilityZone: ca-central-1a
+      ImageId: ami-42922926
+      InstanceType: t2.medium
+      KeyName: Arista-vEOS-Router
+      UserData: 
+        Fn::Base64: "%EOS-STARTUP-CONFIG-START%\nhostname Arista-vRouter\ninterface Ethernet1\nmtu 9001\nno switchport\nip address 10.1.1.6/24\ninterface Ethernet2\nmtu 9001\nno switchport\nip address 10.1.11.6/24\nip route 0.0.0.0/0 Ethernet2 10.1.11.1\nip routing\n%EOS-STARTUP-CONFIG-END%\n"
+      NetworkInterfaces:
+       - NetworkInterfaceId: !Ref vEOSIntfSubnetA1
+         DeviceIndex: 0
+       - NetworkInterfaceId: !Ref vEOSIntfSubnetA2
+         DeviceIndex: 1
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - ${ID}-vRouter
+          - {ID: !Ref ID}
