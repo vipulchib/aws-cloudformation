@@ -51,10 +51,10 @@ I have broken down every section of the template and provided my thought process
    B. A Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
    Parameter with a 'Value (default)' as **10.1.0.0/16**
 
-   C. AParameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
+   C. A Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
    Type of Parameter with a 'Value (default)' as **10.1.1.0/24**
      
-   D. AParameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
+   D. A Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
    Type of Parameter with a 'Value (default)' as **10.1.11.0/24**
      
    ```
