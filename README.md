@@ -9,7 +9,9 @@ We will create a 'stack' (a collection of all the AWS resrouces we plan to creat
 For more information on AWS CloudFormation please reference this URL - http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
 
 # Need for Cloudformation Templates
-I often have the need to spin up Arista vEOS Router instances in AWS to demonstrate Arista's Any Cloud capabilities.  Doing so from AWS consoles - VPC & EC2 is rather painful with numerous clicks and lots of back and forth.  With help from a colleague I put together a CloudFormation template that helps me automating all the AWS underlay components - VPC, Subnets, Route Tables, Internet Gateways, EC2 instances, VPC peerings and eventually update all the neccessary route tables for demonstration of an overlay built with Arista vEOS Routers.
+I often have the need to spin up Arista vEOS Router instances in AWS to demonstrate Arista's Any Cloud capabilities.  Doing so from AWS consoles - VPC & EC2 is rather painful with numerous clicks and lots of back and forth.  I've published this document on eos.arista.com which can be leveraged to build whatever I am demonstrating here using the AWS consoles - https://eos.arista.com/arista-any-cloud-platform-hybrid-cloud-veos-router-in-aws-deployment-guide/
+
+With help from a colleague I put together a CloudFormation template that helps me automating all the AWS underlay components - VPC, Subnets, Route Tables, Internet Gateways, EC2 instances, VPC peerings and eventually update all the neccessary route tables for demonstration of an overlay built with Arista vEOS Routers.
 
 # Cloudformation Template creation in YAML
 AWS has done a tremendous job in listing out all the fine details and the documentation is pretty thorough. I will reference a lot of points from this URL - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-guide.html. Templates include several major sections. The Resources section is the only required section. Some sections in a template can be in any order. 
@@ -32,39 +34,40 @@ AWS has done a tremendous job in listing out all the fine details and the docume
    with a 'Value (default)' as **Arista**
      
    B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
-   Parameter with a 'Value (default)' as **10.100.0.0/16**
+   Parameter with a 'Value (default)' as **10.1.0.0/16**
 
    C. We will create a Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
-   Type of Parameter with a 'Value (default)' as **10.100.1.0/24**
+   Type of Parameter with a 'Value (default)' as **10.1.1.0/24**
      
    D. We will create a Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
-   Type of Parameter with a 'Value (default)' as **10.100.111.0/24**
+   Type of Parameter with a 'Value (default)' as **10.1.11.0/24**
      
    ```
    Parameters: 
     ID:
-      Description: VPC ID
+      Description: Arista VPC ID
       Type: String
       Default: Arista
     VPCCidr: 
       Description: VPC Supernet
       Type: String
-      Default: 10.100.0.0/16
+      Default: 10.1.0.0/16
     SubnetA1Cidr: 
       Description: VPC Subnet A-1
       Type: String
-      Default: 10.100.1.0/24
+      Default: 10.1.1.0/24
     SubnetA2Cidr: 
       Description: VPC Subnet A-2
       Type: String
-      Default: 10.100.11.0/24
+      Default: 10.1.11.0/24
    ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as 
      an Amazon EC2 instance.
      
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     A. We will create a Resource for VPC creation and we will name it **AristaVPC**.  For *'CidrBlock'* section of the 
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be defined as *'VPC-Arista'*  but 
+     *'-Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameters section.
       ```
       AristaVPC:
        Type: AWS::EC2::VPC
@@ -76,10 +79,11 @@ AWS has done a tremendous job in listing out all the fine details and the docume
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-     B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     B. We will create a Resource for Security Group and we will name is **AristaSecurityGroup**.  For *'VpcId'* section 
+     of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  In the following example we are 
+     allowing SSH (TCP port 22) and ICMP from 'everywhere' (0.0.0.0/0)
       ```
-      TransitSecurityGroup:
+      AristaSecurityGroup:
        Type: AWS::EC2::SecurityGroup
        Properties:
         GroupName: Arista VPC Security Group
