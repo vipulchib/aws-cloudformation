@@ -28,10 +28,10 @@ AWS has done a tremendous job in listing out all the fine details and the docume
 
 3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  
 
- A. We will create a Parameters for the VPC ID, provide a Description (VPC ID) and then specify the Type of Parameter 
+..A. We will create a Parameters for the VPC ID, provide a Description (VPC ID) and then specify the Type of Parameter 
     with a 'Value (default)' as **Arista**
      
- B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
+..B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
     Parameter with a 'Value (default)' as **10.100.0.0/16**
  
  C. We will create a Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
