@@ -19,13 +19,13 @@ AWS has done a tremendous job in listing out all the fine details and the docume
 ## Template Sections
 I have broken down every section of the template and provided my thought process with regards to what I am doing and how.  We will deploy everything in the 'ca-central-1' region of AWS for this exercise.  We will need to know AMI ID's for Arista vEOS Router instance and the Amaazon Linux instance we will instantiate.  
 
-1.  Following AWS CLI command outputs the Arista vEOS Router AMI ID of ami-42922926:
+1.  Following AWS CLI command outputs the Arista vEOS Router AMI ID of **ami-42922926**:
      ```
      aws ec2 describe-images --region ca-central-1 --filters Name=name,Values="EOS-4.20.1FX*" Name=is-public,Values=true --
      query 'Images[*].{ID:ImageId}' --output text
      ```
     
-2.  Following AWS CLI command outputs the Amazon Linux AMI ID of ami-a954d1cd:
+2.  Following AWS CLI command outputs the Amazon Linux AMI ID of **ami-a954d1cd**:
      ```
      aws ec2 describe-images --owners amazon --filters --region ca-central-1 'Name=name,Values=amzn-ami-hvm-*-x86_64-gp2' --
      query 'sort_by(Images, &CreationDate) | [-1].ImageId'
@@ -134,7 +134,7 @@ I have broken down every section of the template and provided my thought process
            - VPC-${ID}-IGW
            - {ID: !Ref ID}
       ```
-      D. We will create a Resource to Attach the Internet Gateway and we will name it **AttachIGW**.  For *'VpcId'* section 
+     D. We will create a Resource to Attach the Internet Gateway and we will name it **AttachIGW**.  For *'VpcId'* section 
      of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  Similarly for 
      *'InternetGatewayId'* section of the Properties we will reference the *'AristaVPCIGW'* Parameter we previously defined.
       ```
@@ -144,18 +144,19 @@ I have broken down every section of the template and provided my thought process
         VpcId: !Ref 'AristaVPC'
         InternetGatewayId: !Ref 'AristaVPCIGW'
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     E. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA1:
+       Type: AWS::EC2::Subnet
        Properties:
-        CidrBlock: !Ref VPCCidr
+        VpcId: !Ref 'AristaVPC'
+        CidrBlock: !Ref SubnetA1Cidr
+        AvailabilityZone: ca-central-1a
+        MapPublicIpOnLaunch: false
         Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+         - Key: Name
+           Value: !Ref SubnetA1Cidr
       ```
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
