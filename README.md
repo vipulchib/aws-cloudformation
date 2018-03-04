@@ -17,7 +17,21 @@ With help from a colleague I put together a CloudFormation template that helps m
 AWS has done a tremendous job in listing out all the fine details and the documentation is pretty thorough. I will reference a lot of points from this URL - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-guide.html. Templates include several major sections. The Resources section is the only required section. Some sections in a template can be in any order. 
 
 ## Template Sections
-I have broken down every section of the template and provided my thought process with regards to what I am doing and how.
+I have broken down every section of the template and provided my thought process with regards to what I am doing and how.  We will deploy everything in the 'ca-central-1' region of AWS for this exercise.  We will need to know AMI ID's for Arista vEOS Router instance and the Amaazon Linux instance we will instantiate.  
+
+1.  Following AWS CLI command outputs the Arista vEOS Router AMI ID of ami-42922926:
+     ```
+     aws ec2 describe-images --region ca-central-1 --filters Name=name,Values="EOS-4.20.1FX*" Name=is-public,Values=true --
+     query 'Images[*].{ID:ImageId}' --output text
+     ```
+    
+2.  Following AWS CLI command outputs the Amazon Linux AMI ID of ami-a954d1cd:
+     ```
+     aws ec2 describe-images --owners amazon --filters --region ca-central-1 'Name=name,Values=amzn-ami-hvm-*-x86_64-gp2' --
+     query 'sort_by(Images, &CreationDate) | [-1].ImageId'
+     ```
+
+## Building the Cloudformation YAML template.
 
 1. **AWSTemplateFormatVersion: "version date"** - The AWS CloudFormation template version that the template conforms to.
      ```
@@ -68,7 +82,7 @@ I have broken down every section of the template and provided my thought process
      
      A. We will create a Resource for VPC creation and we will name it **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be named as *'VPC-Arista'*  but 
-     *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameters section.
+     *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in the Parameters section.
       ```
       AristaVPC:
        Type: AWS::EC2::VPC
@@ -83,8 +97,8 @@ I have broken down every section of the template and provided my thought process
      B. We will create a Resource for Security Group and we will name it **AristaSecurityGroup**.  For *'VpcId'* section 
      of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  In the following example we are 
      allowing SSH (TCP port 22) and ICMP from 'everywhere' (0.0.0.0/0).  The Security Group will be named as *'VPC-Arista-
-     SecurityGroup'* but *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameter 
-     section.
+     SecurityGroup'* but *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in the 
+     Parameter section.
       ```
       AristaSecurityGroup:
        Type: AWS::EC2::SecurityGroup
@@ -108,7 +122,7 @@ I have broken down every section of the template and provided my thought process
           - {ID: !Ref ID}
       ```
      C. We will create a Resource for the Internet Gateway and we will name it **AristaVPCIGW**. The Internet Gateway will be 
-     named as *'VPC-Arista-IGW'* but *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in 
+     named as *'VPC-Arista-IGW'* but *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in 
      the Parameter section.
       ```
       AristaVPCIGW:
@@ -120,7 +134,7 @@ I have broken down every section of the template and provided my thought process
            - VPC-${ID}-IGW
            - {ID: !Ref ID}
       ```
-      A. We will create a Resource to Attach the Internet Gateway and we will name it **AttachIGW**.  For *'VpcId'* section 
+      D. We will create a Resource to Attach the Internet Gateway and we will name it **AttachIGW**.  For *'VpcId'* section 
      of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  Similarly for 
      *'InternetGatewayId'* section of the Properties we will reference the *'AristaVPCIGW'* Parameter we previously defined.
       ```
