@@ -67,8 +67,8 @@ I have broken down every section of the template and provided my thought process
      an Amazon EC2 instance.
      
      A. We will create a Resource for VPC creation and we will name it **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be defined as *'VPC-Arista'*  but 
-     *'-Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameters section.
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be named as *'VPC-Arista'*  but 
+     *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameters section.
       ```
       AristaVPC:
        Type: AWS::EC2::VPC
@@ -80,9 +80,11 @@ I have broken down every section of the template and provided my thought process
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-     B. We will create a Resource for Security Group and we will name is **AristaSecurityGroup**.  For *'VpcId'* section 
+     B. We will create a Resource for Security Group and we will name it **AristaSecurityGroup**.  For *'VpcId'* section 
      of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  In the following example we are 
-     allowing SSH (TCP port 22) and ICMP from 'everywhere' (0.0.0.0/0)
+     allowing SSH (TCP port 22) and ICMP from 'everywhere' (0.0.0.0/0).  The Security Group will be named as *'VPC-Arista-
+     SecurityGroup'* but *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in the Parameter 
+     section.
       ```
       AristaSecurityGroup:
        Type: AWS::EC2::SecurityGroup
@@ -99,19 +101,24 @@ I have broken down every section of the template and provided my thought process
            FromPort: -1
            ToPort: -1
            CidrIp: 0.0.0.0/0
-      ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-      ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
-       Properties:
-        CidrBlock: !Ref VPCCidr
         Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+        - Key: Name
+          Value: !Sub
+          - VPC-${ID}-SecurityGroup
+          - {ID: !Ref ID}
+      ```
+     C. We will create a Resource for the Internet Gateway and we will name is **AristaVPCIGW**. The Internet Gateway will be 
+     named as *'VPC-Arista-IGW'* but *'Arista'* portion of VPC's name will be derived from the VPC ID we defined in 
+     the Parameter section.
+      ```
+      AristaVPCIGW:
+       Type: AWS::EC2::InternetGateway
+       Properties:
+        Tags:
+         - Key: Name
+           Value: !Sub
+           - VPC-${ID}-IGW
+           - {ID: !Ref ID}
       ```
       A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
@@ -152,20 +159,6 @@ I have broken down every section of the template and provided my thought process
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-      
-           A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-      ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
-       Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
-      ```
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
@@ -192,8 +185,20 @@ I have broken down every section of the template and provided my thought process
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-      
-           A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+      ```
+      AristaVPC:
+       Type: AWS::EC2::VPC
+       Properties:
+        CidrBlock: !Ref VPCCidr
+        Tags:
+          - Key: Name
+            Value: !Sub
+            - VPC-${ID}
+            - {ID: !Ref ID}
+      ```
+     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
       AristaVPC:
