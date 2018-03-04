@@ -43,18 +43,18 @@ I have broken down every section of the template and provided my thought process
      Description: VPC with Arista vEOS Router, subnets, route tables, igw, sg, Linux VMs
      ```
 
-3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  
+3. **Parameters** - Parameters enable you to input custom values to your template each time you create or update a stack.  We will create the following:
 
-   A. We will create a Parameters for the VPC ID, provide a Description (VPC ID) and then specify the Type of Parameter 
+   A. A Parameters for the VPC ID, provide a Description (VPC ID) and then specify the Type of Parameter 
    with a 'Value (default)' as **Arista**
      
-   B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
+   B. A Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
    Parameter with a 'Value (default)' as **10.1.0.0/16**
 
-   C. We will create a Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
+   C. AParameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
    Type of Parameter with a 'Value (default)' as **10.1.1.0/24**
      
-   D. We will create a Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
+   D. AParameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
    Type of Parameter with a 'Value (default)' as **10.1.11.0/24**
      
    ```
@@ -78,11 +78,11 @@ I have broken down every section of the template and provided my thought process
    ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as 
-     an Amazon EC2 instance.
+     an Amazon EC2 instance.  We will create the following:
      
-     A. We will create a Resource for VPC creation and we will name it **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be named as *'VPC-Arista'*  but 
-     *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in the Parameters section.
+     A. A Resource for VPC creation and name it **AristaVPC**.  For *'CidrBlock'* section of the Properties we 
+     will reference the *'VPCCidr'* Parameter we previously defined.  VPC will be named as *'VPC-Arista'*  but *'Arista'* 
+     portion of VPC's name will be derived by referencing the VPC ID we defined in the Parameters section.
       ```
       AristaVPC:
        Type: AWS::EC2::VPC
@@ -94,8 +94,8 @@ I have broken down every section of the template and provided my thought process
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-     B. We will create a Resource for Security Group and we will name it **AristaSecurityGroup**.  For *'VpcId'* section 
-     of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  In the following example we are 
+     B. A Resource for Security Group and name it **AristaSecurityGroup**.  For *'VpcId'* section of the 
+     Properties we will reference the *'AristaVPC'* Parameter we previously defined.  In the following example we are 
      allowing SSH (TCP port 22) and ICMP from 'everywhere' (0.0.0.0/0).  The Security Group will be named as *'VPC-Arista-
      SecurityGroup'* but *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in the 
      Parameter section.
@@ -121,9 +121,9 @@ I have broken down every section of the template and provided my thought process
           - VPC-${ID}-SecurityGroup
           - {ID: !Ref ID}
       ```
-     C. We will create a Resource for the Internet Gateway and we will name it **AristaVPCIGW**. The Internet Gateway will be 
-     named as *'VPC-Arista-IGW'* but *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in 
-     the Parameter section.
+     C. A Resource for the Internet Gateway and name it **AristaVPCIGW**. The Internet Gateway will be named as 
+     *'VPC-Arista-IGW'* but *'Arista'* portion of VPC's name will be derived by referencing the VPC ID we defined in the 
+     Parameter section.
       ```
       AristaVPCIGW:
        Type: AWS::EC2::InternetGateway
@@ -134,9 +134,9 @@ I have broken down every section of the template and provided my thought process
            - VPC-${ID}-IGW
            - {ID: !Ref ID}
       ```
-     D. We will create a Resource to Attach the Internet Gateway and we will name it **AttachIGW**.  For *'VpcId'* section 
-     of the Properties we will reference the *'AristaVPC'* Parameter we previously defined.  Similarly for 
-     *'InternetGatewayId'* section of the Properties we will reference the *'AristaVPCIGW'* Parameter we previously defined.
+     D. A Resource to Attach the Internet Gateway and name it **AttachIGW**.  For *'VpcId'* section of the 
+     Properties we will reference the *'AristaVPC'* Parameter we previously defined.  Similarly for *'InternetGatewayId'* 
+     section of the Properties we will reference the *'AristaVPCIGW'* Parameter we previously defined.
       ```
       AttachIGW:
        Type: AWS::EC2::VPCGatewayAttachment
@@ -144,8 +144,7 @@ I have broken down every section of the template and provided my thought process
         VpcId: !Ref 'AristaVPC'
         InternetGatewayId: !Ref 'AristaVPCIGW'
       ```
-     E. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     E. A Resource for the 1st Subnet and name it **subnetA1**.
       ```
       subnetA1:
        Type: AWS::EC2::Subnet
@@ -158,97 +157,56 @@ I have broken down every section of the template and provided my thought process
          - Key: Name
            Value: !Ref SubnetA1Cidr
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     F. A Resource for the 1st Subnet Routing Table and name it **subnetA1RT**
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA1RT:
+       Type: AWS::EC2::RouteTable
        Properties:
-        CidrBlock: !Ref VPCCidr
+        VpcId: !Ref 'AristaVPC'
         Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+         - Key: Name
+           Value: !Ref SubnetA1Cidr
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     G. A Resource for Associating the 1st Subnet to Routing Table and name it **subnetA1RTAssoc**.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA1RTAssoc:
+       Type: AWS::EC2::SubnetRouteTableAssociation
        Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+        SubnetId: !Ref subnetA1
+        RouteTableId: !Ref subnetA1RT  
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     H. A Resource for the 2nd Subnet and name it **subnetA2**.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA2:
+       Type: AWS::EC2::Subnet
        Properties:
-        CidrBlock: !Ref VPCCidr
+        VpcId: !Ref 'AristaVPC'
+        CidrBlock: !Ref SubnetA2Cidr
+        AvailabilityZone: ca-central-1a
+        MapPublicIpOnLaunch: false
         Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+         - Key: Name
+           Value: !Ref SubnetA2Cidr
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     I. A Resource for the 2nd Subnet Routing Table and name it **subnetA2RT**
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA2RT:
+       Type: AWS::EC2::RouteTable
        Properties:
-        CidrBlock: !Ref VPCCidr
+        VpcId: !Ref 'AristaVPC'
         Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+         - Key: Name
+           Value: !Ref SubnetA2Cidr
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     J. A Resource for Associating the 2nd Subnet to Routing Table and name it **subnetA2RTAssoc**.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      subnetA2RTAssoc:
+       Type: AWS::EC2::SubnetRouteTableAssociation
        Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+        SubnetId: !Ref subnetA2
+        RouteTableId: !Ref subnetA2RT  
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-      ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
-       Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
-      ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-      ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
-       Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
-      ```
+     
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
 ```
