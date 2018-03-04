@@ -61,9 +61,6 @@ AWS has done a tremendous job in listing out all the fine details and the docume
    ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as an Amazon EC2 instance.
-     ```
-     Resources:
-     ```
      
    A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
    Properties we will reference the *'VPCCidr'* Parameter we previously defined.
