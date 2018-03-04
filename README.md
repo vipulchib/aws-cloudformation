@@ -225,9 +225,63 @@ I have broken down every section of the template and provided my thought process
         RouteTableId: !Ref 'subnetA2RT'
         DestinationCidrBlock: 0.0.0.0/0
         GatewayId: !Ref 'AristaVPCIGW'
-      ```    
+      ``` 
+     M. A Resource for Compute Instance's Interface and name it **VMIntf1a**.
+      ```
+      VMIntf1a:
+      Type: AWS::EC2::NetworkInterface
+      Properties:
+       SourceDestCheck: false
+       SubnetId: !Ref 'subnetA2'
+       GroupSet:
+       - !Ref AristaSecurityGroup
+       PrivateIpAddress: 10.1.11.10
+       Tags:
+        - Key: Name
+          Value: !Sub
+          - ${ID}-Host-ETH0
+          - {ID: !Ref ID}
+      ```  
+     N. A Resource to Create and Associate an Elastic IP to the previously created Compute Instance's Interface and name it 
+     **VMIntf1aEIP**.
+      ```
+      VMIntf1aEIP:
+       Type: AWS::EC2::EIP
+       Properties:
+        Domain: vpc
+      AssociateVMIntf1aEIP:
+       Type: AWS::EC2::EIPAssociation
+       Properties:
+        AllocationId: !GetAtt VMIntf1aEIP.AllocationId
+        NetworkInterfaceId: !Ref VMIntf1a
+      ```  
+     O. A Resource for the Compute Instance and name it **Ec2Instance1a**.
+      ```
+      Ec2Instance1a:
+       Type: AWS::EC2::Instance
+       DependsOn: AristaVPCIGW
+       Properties:
+        AvailabilityZone: ca-central-1a
+        ImageId: ami-a954d1cd
+        InstanceType: t2.micro
+        KeyName: Arista-vEOS-Router
+        UserData: 
+         Fn::Base64: !Sub | 
+          #!/bin/bash -xe 
+          yum update -y 
+          yum --enablerepo=epel install -y iperf iperf3
+         NetworkInterfaces:
+          - NetworkInterfaceId: !Ref VMIntf1a
+            DeviceIndex: 0
+         Tags:
+          - Key: Name
+            Value: !Sub
+            - ${ID}-Host
+            - {ID: !Ref ID}
+      ```  
+
 # Building a Stack
-We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
+We will build the Stack using the YAML file that comprises of the Parameters and Resources we defined in the previous section.  We will use the following AWS CLI command to launch the stack:
 ```
 aws cloudformation create-stack --stack-name AristaVPCStack --template-body file://Github-AristaVPC.yaml
 ```
