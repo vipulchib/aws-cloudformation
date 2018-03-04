@@ -9,7 +9,7 @@ We will create a 'stack' (a collection of all the AWS resrouces we plan to creat
 For more information on AWS CloudFormation please reference this URL - http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
 
 # Need for Cloudformation Templates
-I often have the need to spin up Arista vEOS Router instances in AWS to demonstrate Arista's Any Cloud capabilities.  Doing so from AWS consoles - VPC & EC2 is rather painful with numerous clicks and lots of back and forth.  I've published this document on eos.arista.com which can be leveraged to build whatever I am demonstrating here using the AWS consoles - https://eos.arista.com/arista-any-cloud-platform-hybrid-cloud-veos-router-in-aws-deployment-guide/
+I often have the need to spin up Arista vEOS Router instances in AWS to demonstrate Arista's Any Cloud capabilities.  Doing so from AWS consoles - VPC & EC2 is rather painful with numerous clicks and lots of back and forth.  I've published a document on Arista EOS Central which can be leveraged to build whatever I am demonstrating here using the AWS VPC & EC2 consoles - https://eos.arista.com/arista-any-cloud-platform-hybrid-cloud-veos-router-in-aws-deployment-guide/
 
 With help from a colleague I put together a CloudFormation template that helps me automating all the AWS underlay components - VPC, Subnets, Route Tables, Internet Gateways, EC2 instances, VPC peerings and eventually update all the neccessary route tables for demonstration of an overlay built with Arista vEOS Routers.
 
@@ -17,6 +17,7 @@ With help from a colleague I put together a CloudFormation template that helps m
 AWS has done a tremendous job in listing out all the fine details and the documentation is pretty thorough. I will reference a lot of points from this URL - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-guide.html. Templates include several major sections. The Resources section is the only required section. Some sections in a template can be in any order. 
 
 ## Template Sections
+I have broken down every section of the template and provided my thought process with regards to what I am doing and how.
 
 1. **AWSTemplateFormatVersion: "version date"** - The AWS CloudFormation template version that the template conforms to.
      ```
