@@ -65,10 +65,21 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+           ```
+      AristaVPC:
+       Type: AWS::EC2::VPC
+       Properties:
+        CidrBlock: !Ref VPCCidr
+        Tags:
+          - Key: Name
+            Value: !Sub
+            - VPC-${ID}
+            - {ID: !Ref ID}
+       ```
      
      B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-      ```
+           ```
       AristaVPC:
        Type: AWS::EC2::VPC
        Properties:
@@ -81,7 +92,18 @@ AWS has done a tremendous job in listing out all the fine details and the docume
        ```
        
      C. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.   
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+           ```
+      AristaVPC:
+       Type: AWS::EC2::VPC
+       Properties:
+        CidrBlock: !Ref VPCCidr
+        Tags:
+          - Key: Name
+            Value: !Sub
+            - VPC-${ID}
+            - {ID: !Ref ID}
+       ```
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
