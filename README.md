@@ -279,7 +279,73 @@ I have broken down every section of the template and provided my thought process
             - ${ID}-Host
             - {ID: !Ref ID}
       ```  
-
+     P. A Resource for the Arista vEOS Router's Interfaces and name them **vEOSIntfSubnetA1** and **vEOSIntfSubnetA2**.
+      ```
+      vEOSIntfSubnetA1:
+       Type: AWS::EC2::NetworkInterface
+       Properties:
+        SourceDestCheck: false
+        SubnetId: !Ref 'subnetA1'
+        GroupSet:
+        - !Ref AristaSecurityGroup
+        PrivateIpAddress: 10.1.1.6
+        Tags:
+         - Key: Name
+           Value: !Sub
+           - vRouter-${ID}-ETH1
+           - {ID: !Ref ID}
+      vEOSIntfSubnetA2:
+       Type: AWS::EC2::NetworkInterface
+       Properties:
+        SourceDestCheck: false
+        SubnetId: !Ref 'subnetA2'
+        GroupSet:
+        - !Ref AristaSecurityGroup
+        PrivateIpAddress: 10.1.11.6
+        Tags:
+         - Key: Name
+           Value: !Sub
+           - vRouter-${ID}-ETH2
+           - {ID: !Ref ID}
+      ``` 
+     Q. A Resource to Create and Associate an Elastic IP to the previously created Arista vEOS Router's Ethernet2 Interface 
+     and name it **vEOSIntfSubnetA2EIP**.
+      ```
+      vEOSIntfSubnetA2EIP:
+       Type: AWS::EC2::EIP
+       Properties:
+        Domain: vpc
+      AssociatevEOSIntfSubnetA2EIP:
+       Type: AWS::EC2::EIPAssociation
+       Properties:
+        AllocationId: !GetAtt vEOSIntfSubnetA2EIP.AllocationId
+        NetworkInterfaceId: !Ref vEOSIntfSubnetA2
+      ``` 
+     R. A Resource to create the Arista vEOS Router instance and name it **AristavEOSRouter**.
+      ```
+      AristavEOSRouter:
+       Type: AWS::EC2::Instance
+       DependsOn: AristaVPCIGW
+       Properties:
+        AvailabilityZone: ca-central-1a
+        ImageId: ami-42922926
+        InstanceType: t2.medium
+        KeyName: Arista-vEOS-Router
+        UserData: 
+         Fn::Base64: "%EOS-STARTUP-CONFIG-START%\nhostname Arista-vRouter\ninterface Ethernet1\nmtu 9001\nno switchport\nip 
+         address 10.1.1.6/24\ninterface Ethernet2\nmtu 9001\nno switchport\nip address 10.1.11.6/24\nip route 0.0.0.0/0 
+         Ethernet2 10.1.11.1\nip routing\n%EOS-STARTUP-CONFIG-END%\n"
+        NetworkInterfaces:
+        - NetworkInterfaceId: !Ref vEOSIntfSubnetA1
+          DeviceIndex: 0
+        - NetworkInterfaceId: !Ref vEOSIntfSubnetA2
+          DeviceIndex: 1
+        Tags:
+         - Key: Name
+           Value: !Sub
+           - ${ID}-vRouter
+           - {ID: !Ref ID}
+      ``` 
 # Building a Stack
 We will build the Stack using the YAML file that comprises of the Parameters and Resources we defined in the previous section.  We will use the following AWS CLI command to launch the stack:
 ```
