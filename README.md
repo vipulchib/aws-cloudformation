@@ -113,8 +113,7 @@ I have broken down every section of the template and provided my thought process
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-      
-           A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
       AristaVPC:
