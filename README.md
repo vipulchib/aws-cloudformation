@@ -63,18 +63,18 @@ AWS has done a tremendous job in listing out all the fine details and the docume
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as 
      an Amazon EC2 instance.
      
-   A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-   Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
    
-    AristaVPC:
-     Type: AWS::EC2::VPC
-     Properties:
-      CidrBlock: !Ref VPCCidr
-      Tags:
-        - Key: Name
-          Value: !Sub
-          - VPC-${ID}
-          - {ID: !Ref ID}
+         AristaVPC:
+          Type: AWS::EC2::VPC
+          Properties:
+           CidrBlock: !Ref VPCCidr
+           Tags:
+             - Key: Name
+               Value: !Sub
+               - VPC-${ID}
+               - {ID: !Ref ID}
      
    B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
    Parameter with a 'Value (default)' as **10.100.0.0/16**
