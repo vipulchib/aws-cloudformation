@@ -42,45 +42,55 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      
    ```
    Parameters: 
-     ID:
-       Description: VPC ID
-       Type: String
-       Default: Arista
-     VPCCidr: 
-       Description: VPC Supernet
-       Type: String
-       Default: 10.100.0.0/16
-     SubnetA1Cidr: 
-       Description: VPC Subnet A-1
-       Type: String
-       Default: 10.100.1.0/24
-     SubnetA2Cidr: 
-       Description: VPC Subnet A-2
-       Type: String
-       Default: 10.100.11.0/24
+    ID:
+      Description: VPC ID
+      Type: String
+      Default: Arista
+    VPCCidr: 
+      Description: VPC Supernet
+      Type: String
+      Default: 10.100.0.0/16
+    SubnetA1Cidr: 
+      Description: VPC Subnet A-1
+      Type: String
+      Default: 10.100.1.0/24
+    SubnetA2Cidr: 
+      Description: VPC Subnet A-2
+      Type: String
+      Default: 10.100.11.0/24
    ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as an Amazon EC2 instance.  
-     ```
-     Resources: 
-     ```
-Here is a list of resources we will create:
 
-   A. We will create a Resource for the VPC Creation:
+   ```
+   Resources: 
+   ```
+
+   A. We will create a Parameters for the VPC ID, provide a Description (VPC ID) and then specify the Type of Parameter 
+   with a 'Value (default)' as **Arista**
      
-     ``````
-         TransitVPC:
-         Type: AWS::EC2::VPC
-         Properties:
-           CidrBlock: !Ref VPCCidr
-           Tags:
-             - Key: Name
-               Value: !Sub
-               - VPC-${ID}
-               - {ID: !Ref ID}
-     ``````  
+   B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
+   Parameter with a 'Value (default)' as **10.100.0.0/16**
+
+   C. We will create a Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
+   Type of Parameter with a 'Value (default)' as **10.100.1.0/24**
      
-   B. We
+   D. We will create a Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
+   Type of Parameter with a 'Value (default)' as **10.100.111.0/24**
+     
+   ```
+   Resources:
+    TransitVPC:
+     Type: AWS::EC2::VPC
+     Properties:
+      CidrBlock: !Ref VPCCidr
+      Tags:
+        - Key: Name
+          Value: !Sub
+          - VPC-${ID}
+          - {ID: !Ref ID}
+     ```
+
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
