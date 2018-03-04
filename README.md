@@ -40,25 +40,25 @@ AWS has done a tremendous job in listing out all the fine details and the docume
    D. We will create a Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
    Type of Parameter with a 'Value (default)' as **10.100.111.0/24**
      
-     ```
-     Parameters: 
-       ID:
-         Description: VPC ID
-         Type: String
-         Default: Arista
-       VPCCidr: 
-         Description: VPC Supernet
-         Type: String
-         Default: 10.100.0.0/16
-       SubnetA1Cidr: 
-         Description: VPC Subnet A-1
-         Type: String
-         Default: 10.100.1.0/24
-       SubnetA2Cidr: 
-         Description: VPC Subnet A-2
-         Type: String
-         Default: 10.100.11.0/24
-     ```
+   ```
+   Parameters: 
+     ID:
+       Description: VPC ID
+       Type: String
+       Default: Arista
+     VPCCidr: 
+       Description: VPC Supernet
+       Type: String
+       Default: 10.100.0.0/16
+     SubnetA1Cidr: 
+       Description: VPC Subnet A-1
+       Type: String
+       Default: 10.100.1.0/24
+     SubnetA2Cidr: 
+       Description: VPC Subnet A-2
+       Type: String
+       Default: 10.100.11.0/24
+   ```
 
 4. **Resources** -  The required Resources section declares the AWS resources that you want to include in the stack, such as an Amazon EC2 instance.  
      ```
