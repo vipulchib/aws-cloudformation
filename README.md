@@ -206,7 +206,26 @@ I have broken down every section of the template and provided my thought process
         SubnetId: !Ref subnetA2
         RouteTableId: !Ref subnetA2RT  
       ```
-     
+     K. A Resource for Route for 10.0.0.0/8 to point to *'vEOSIntfSubnetA2'* and name it **privateRouteA2**.
+      ```
+      privateRouteA2:
+       Type: AWS::EC2::Route
+       DependsOn: vEOSIntfSubnetA2
+       Properties:
+        RouteTableId: !Ref 'subnetA2RT'
+        DestinationCidrBlock: 10.0.0.0/8
+        NetworkInterfaceId: !Ref 'vEOSIntfSubnetA2' 
+      ```     
+     L. A Resource for the default Route for 0.0.0.0/0 to point to *'AristaVPCIGW'* and name it **publicRouteA2**.
+      ```
+      publicRouteA2:
+       Type: AWS::EC2::Route
+       DependsOn: AttachIGW
+       Properties:
+        RouteTableId: !Ref 'subnetA2RT'
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref 'AristaVPCIGW'
+      ```    
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
 ```
