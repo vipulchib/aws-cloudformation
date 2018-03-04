@@ -75,23 +75,8 @@ AWS has done a tremendous job in listing out all the fine details and the docume
             Value: !Sub
             - VPC-${ID}
             - {ID: !Ref ID}
-       ```
-     
-     B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
-     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
-       Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
-       ```
-       
-     C. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
            ```
       AristaVPC:
