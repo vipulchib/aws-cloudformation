@@ -65,7 +65,7 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-           ```
+      ```
       AristaVPC:
        Type: AWS::EC2::VPC
        Properties:
@@ -79,7 +79,7 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      
      B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-           ```
+      ```
       AristaVPC:
        Type: AWS::EC2::VPC
        Properties:
