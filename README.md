@@ -76,18 +76,24 @@ AWS has done a tremendous job in listing out all the fine details and the docume
             - VPC-${ID}
             - {ID: !Ref ID}
       ```
-     A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
       ```
-      AristaVPC:
-       Type: AWS::EC2::VPC
+      TransitSecurityGroup:
+       Type: AWS::EC2::SecurityGroup
        Properties:
-        CidrBlock: !Ref VPCCidr
-        Tags:
-          - Key: Name
-            Value: !Sub
-            - VPC-${ID}
-            - {ID: !Ref ID}
+        GroupName: Arista VPC Security Group
+        GroupDescription: Allow SSH and ICMP from Everywhere
+        VpcId: !Ref 'AristaVPC'
+        SecurityGroupIngress:
+         - IpProtocol: tcp
+           FromPort: '22'
+           ToPort: '22'
+           CidrIp: 0.0.0.0/0
+         - IpProtocol: icmp
+           FromPort: -1
+           ToPort: -1
+           CidrIp: 0.0.0.0/0
       ```
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
