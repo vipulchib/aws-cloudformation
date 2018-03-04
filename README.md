@@ -65,7 +65,10 @@ AWS has done a tremendous job in listing out all the fine details and the docume
      
      A. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
      Properties we will reference the *'VPCCidr'* Parameter we previously defined.
-   
+     
+     B. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.
+      ```
       AristaVPC:
        Type: AWS::EC2::VPC
        Properties:
@@ -75,16 +78,10 @@ AWS has done a tremendous job in listing out all the fine details and the docume
             Value: !Sub
             - VPC-${ID}
             - {ID: !Ref ID}
-     
-   B. We will create a Parameters for the VPC CIDR, provide a Description (VPC Supernet) and then specify the Type of 
-   Parameter with a 'Value (default)' as **10.100.0.0/16**
-
-   C. We will create a Parameters for the 1st Subnet in the VPC, provide a Description (VPC Subnet A-1) and then specify the 
-   Type of Parameter with a 'Value (default)' as **10.100.1.0/24**
-     
-   D. We will create a Parameters for the 2nd Subnet in the VPC, provide a Description (VPC Subnet A-2) and then specify the 
-   Type of Parameter with a 'Value (default)' as **10.100.111.0/24**
-   
+       ```
+       
+     C. We will create a Resource for VPC creation and we will name is **AristaVPC**.  For *'CidrBlock'* section of the 
+     Properties we will reference the *'VPCCidr'* Parameter we previously defined.   
 
 # Building a Stack
 We will build the Stack and use AWS CLI to create, monitor, update and delete stacks.
