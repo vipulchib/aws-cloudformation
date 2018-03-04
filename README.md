@@ -255,7 +255,9 @@ I have broken down every section of the template and provided my thought process
         AllocationId: !GetAtt VMIntf1aEIP.AllocationId
         NetworkInterfaceId: !Ref VMIntf1a
       ```  
-     O. A Resource for the Compute Instance and name it **Ec2Instance1a**.
+     O. A Resource for the Compute Instance and name it **Ec2Instance1a**.  Note that we are refercing a pre-defined Key named 
+     *'Arista-vEOS-Router'* while creating this instance.  Ensure that this is key is created and you have downloaded it to be 
+     able to access the instance upon creation.
       ```
       Ec2Instance1a:
        Type: AWS::EC2::Instance
@@ -321,7 +323,9 @@ I have broken down every section of the template and provided my thought process
         AllocationId: !GetAtt vEOSIntfSubnetA2EIP.AllocationId
         NetworkInterfaceId: !Ref vEOSIntfSubnetA2
       ``` 
-     R. A Resource to create the Arista vEOS Router instance and name it **AristavEOSRouter**.
+     R. A Resource to create the Arista vEOS Router instance and name it **AristavEOSRouter**.  Note that we are refercing 
+     pre-defined Key named *'Arista-vEOS-Router'* while creating this instance.  Ensure that this is key is created and you 
+     have downloaded it to be able to access the instance upon creation.
       ```
       AristavEOSRouter:
        Type: AWS::EC2::Instance
@@ -349,7 +353,7 @@ I have broken down every section of the template and provided my thought process
 # Building a Stack
 We will build the Stack using the YAML file that comprises of the Parameters and Resources we defined in the previous section.  We will use the following AWS CLI command to launch the stack:
 ```
-aws cloudformation create-stack --stack-name AristaVPCStack --template-body file://Github-AristaVPC.yaml
+aws cloudformation create-stack --stack-name AristaVPCStack --template-body file://AristaVPC.yaml
 ```
 
 
