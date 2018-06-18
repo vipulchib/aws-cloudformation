@@ -1,0 +1,34 @@
+# Overview
+Purpose of this post is construct Transit and Edge VPC's with Arista vEOS Router instances to build and over.  We will also instantiate linux instances in both the VPC's for end to end connectivity tests.
+
+# What is CloudFormation
+I have covered building a template in good amount of detail in this post: https://github.com/vipulchib/aws-cloudformation
+
+In the current post I have provided pre-built templates for Transit and Edge VPC's.
+
+## Template Sections
+We will deploy everything in the 'us-east-1' region of AWS for this exercise.  We will need to know AMI ID's for Arista vEOS Router instance and the Amaazon Linux instance we will instantiate.  
+
+1.  Following AWS CLI command outputs the Arista vEOS Router AMI ID of **ami-42922926**:
+     ```
+     aws ec2 describe-images --region us-east-1 --filters Name=name,Values="EOS-4.20.1FX*" Name=is-public,Values=true --
+     query 'Images[*].{ID:ImageId}' --output text
+     ```
+
+2.  Following AWS CLI command outputs the Amazon Linux AMI ID of **ami-a954d1cd**:
+     ```
+     aws ec2 describe-images --owners amazon --filters --region us-east-1 'Name=name,Values=amzn-ami-hvm-*-x86_64-gp2' --
+     query 'sort_by(Images, &CreationDate) | [-1].ImageId'
+     ```
+
+## Building the Transit VPC Stack.
+
+1. **AWSTemplateFormatVersion: "version date"** - The AWS CloudFormation template version that the template conforms to.
+     ```
+     aws cloudformation create-stack --stack-name AristaEdgeVPCStack --template-body file://AristaEdgeVPC.yaml
+     ```
+
+2. **Description** - A text string that describes the template.
+     ```
+     aws cloudformation create-stack --stack-name AristaTransitVPCStack --template-body file://AristaTransitVPC.yaml
+     ```
